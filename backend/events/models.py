@@ -4,6 +4,11 @@ from organizations.models import Organization
 
 
 class Event(models.Model):
+  class Visibility(models.TextChoices):
+    PUBLIC = "public", "Public"
+    UNLISTED = "unlisted", "Unlisted"
+    PRIVATE = "private", "Private"
+    
   organization = models.ForeignKey(
     Organization,
     on_delete=models.PROTECT,
@@ -18,6 +23,12 @@ class Event(models.Model):
   ) 
   
   description = models.TextField(blank=True)
+  
+  visibility = models.CharField(
+    max_length=20,
+    choices=Visibility.choices,
+    default=Visibility.UNLISTED,
+  )
   
   starts_at = models.DateTimeField()
   

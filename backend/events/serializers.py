@@ -16,6 +16,7 @@ class EventSerializer(serializers.ModelSerializer):
             "title",
             "slug",
             "description",
+            "visibility",
             "starts_at",
             "ends_at",
             "created_at",
