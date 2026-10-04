@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Event
-from .serializers import EventSerializer
+from .serializers import EventSerializer, PublicEventSerializer
 
 
 class EventListView(APIView):
@@ -21,6 +21,7 @@ class EventListView(APIView):
         serializer = EventSerializer(
             events,
             many=True,
+            context={"requrst":request}
         )
 
         return Response(serializer.data)
@@ -34,9 +35,10 @@ class PublicEventListView(APIView):
             Event.objects.filter(visibility = Event.Visibility.PUBLIC).select_related("organization").order_by("starts_at")
         )
         
-        serializer = EventSerializer(
+        serializer = PublicEventSerializer(
             events,
             many=True,
+            context={"requst":request}
         )
         
         return Response(serializer.data)
@@ -55,7 +57,10 @@ class PublicEventDetailView(APIView):
             ]
         )
         
-        serializer = EventSerializer(event)
+        serializer = PublicEventSerializer(
+            event,
+            context={"request": request},
+        )
         
         return Response(serializer.data)
     

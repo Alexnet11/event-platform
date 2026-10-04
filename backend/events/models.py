@@ -24,6 +24,32 @@ class Event(models.Model):
   
   description = models.TextField(blank=True)
   
+  short_description = models.CharField(
+    max_length=300,
+    blank=True,
+  )
+  
+  location_name = models.CharField(
+    max_length=255,
+    blank=True,
+  )
+  
+  address = models.CharField(
+    max_length=500,
+    blank=True,
+  )
+  
+  cover_image = models.ImageField(
+    upload_to="events/covers",
+    null=True,
+    blank=True
+  )
+  
+  registration_enabled = models.BooleanField(
+    default=True,
+  )
+  
+  
   visibility = models.CharField(
     max_length=20,
     choices=Visibility.choices,
