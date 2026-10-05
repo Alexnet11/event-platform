@@ -7,7 +7,7 @@ from events.models import Event
 from organizations.models import OrganizationMembership
 
 from .models import Registration
-from .serializers import (PublicRegistrationSerializer, OrganizerRegistrationSerializer )
+from .serializers import (PublicRegistrationSerializer, OrganizerRegistrationSerializer, RegistrationStatusSerializer )
 
 
 class PublicRegistrationCreateView(generics.CreateAPIView):
@@ -69,3 +69,30 @@ class EventRegistrationListView(generics.ListAPIView):
             .filter(event=event)
             .order_by("-created_at")
         )
+        
+        
+class EventRegistrationDetailView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Registration.objects
+            .filter(
+                event_id=self.kwargs["event_id"],
+                event__organization__memberships__user=self.request.user,
+                event__organization__memberships__role__in=[
+                    OrganizationMembership.Role.ADMIN,
+                    OrganizationMembership.Role.MANAGER,
+                ],
+            )
+            .select_related(
+                "event",
+                "event__organization",
+            )
+        )
+
+    def get_serializer_class(self):
+        if self.request.method in ("PUT", "PATCH"):
+            return RegistrationStatusSerializer
+
+        return OrganizerRegistrationSerializer
