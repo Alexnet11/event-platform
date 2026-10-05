@@ -70,3 +70,16 @@ class OrganizerRegistrationSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = fields
+        
+        
+class RegistrationStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Registration
+        fields = (
+            "id",
+            "status",
+        )
+
+        read_only_fields = (
+            "id",
+        )
