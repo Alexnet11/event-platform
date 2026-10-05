@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Event
+from organizations.models import OrganizationMembership
 from .serializers import EventSerializer, PublicEventSerializer
 
 
@@ -64,3 +66,40 @@ class PublicEventDetailView(APIView):
         
         return Response(serializer.data)
     
+    
+class EventListCreateView(generics.ListCreateAPIView):
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Event.objects
+            .filter(
+                organization__memberships__user=self.request.user,
+                organization__memberships__role__in=[
+                    OrganizationMembership.Role.ADMIN,
+                    OrganizationMembership.Role.MANAGER,
+                ],
+            )
+            .select_related("organization")
+            .order_by("starts_at")
+        )
+        
+        
+        
+class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Event.objects
+            .filter(
+                organization__memberships__user=self.request.user,
+                organization__memberships__role__in=[
+                    OrganizationMembership.Role.ADMIN,
+                    OrganizationMembership.Role.MANAGER,
+                ],
+            )
+            .select_related("organization")
+        )
