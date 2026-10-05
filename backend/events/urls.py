@@ -9,7 +9,6 @@ urlpatterns = [
   path("public/events", PublicEventListView.as_view(), name="public-event-list"),
   path("public/events/<slug:slug>", PublicEventDetailView.as_view(), name="public-event-detail"),
   
-  
 ]
 
 
