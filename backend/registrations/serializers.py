@@ -45,3 +45,28 @@ class PublicRegistrationSerializer(serializers.ModelSerializer):
             )
 
         return attrs
+      
+      
+class OrganizerRegistrationSerializer(serializers.ModelSerializer):
+    status_label = serializers.CharField(
+        source="get_status_display",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Registration
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "company",
+            "position",
+            "status",
+            "status_label",
+            "created_at",
+            "updated_at",
+        )
+
+        read_only_fields = fields
