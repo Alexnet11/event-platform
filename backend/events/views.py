@@ -87,7 +87,7 @@ class EventListCreateView(generics.ListCreateAPIView):
         
         
         
-class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
+class EventDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
 
