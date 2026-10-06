@@ -1,5 +1,8 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Count, Q
+from rest_framework.views import APIView
 from rest_framework import generics
+from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
@@ -96,3 +99,38 @@ class EventRegistrationDetailView(generics.RetrieveUpdateAPIView):
             return RegistrationStatusSerializer
 
         return OrganizerRegistrationSerializer
+    
+    
+class EventStatsView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, event_id):
+        event = get_object_or_404(
+            Event.objects.select_related("organization"),
+            pk=event_id,
+            organization__memberships__user=request.user,
+            organization__memberships__role__in=[
+                OrganizationMembership.Role.ADMIN,
+                OrganizationMembership.Role.MANAGER,
+            ],
+        )
+
+        stats = Registration.objects.filter(
+            event=event
+        ).aggregate(
+            registrations_total=Count("id"),
+            registered=Count(
+                "id",
+                filter=Q(
+                    status=Registration.Status.REGISTERED
+                ),
+            ),
+            cancelled=Count(
+                "id",
+                filter=Q(
+                    status=Registration.Status.CANCELLED
+                ),
+            ),
+        )
+
+        return Response({"event_id": event.id, "title": event.title, **stats,})
