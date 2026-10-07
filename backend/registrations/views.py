@@ -15,6 +15,7 @@ from .serializers import (PublicRegistrationSerializer, OrganizerRegistrationSer
 
 class PublicRegistrationCreateView(generics.CreateAPIView):
     serializer_class = PublicRegistrationSerializer
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def get_event(self):
