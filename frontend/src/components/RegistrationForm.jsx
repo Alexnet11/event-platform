@@ -15,7 +15,6 @@ const initialForm = {
 
 function RegistrationForm({ slug }) {
   const [form, setForm] = useState(initialForm)
-
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errors, setErrors] = useState({})
@@ -49,116 +48,157 @@ function RegistrationForm({ slug }) {
 
   if (success) {
     return (
-      <section>
-        <h2>Регистрация завершена</h2>
+      <div className="registration-success">
+        <div className="registration-success__icon">
+          ✓
+        </div>
+
+        <p className="eyebrow">
+          ГОТОВО
+        </p>
+
+        <h2>
+          Вы зарегистрированы
+        </h2>
 
         <p>
-          Спасибо! Ваша регистрация на мероприятие
-          успешно сохранена.
+          Регистрация успешно сохранена.
+          До встречи на мероприятии!
         </p>
 
         <button
           type="button"
+          className="button button--secondary"
           onClick={() => setSuccess(false)}
         >
-          Зарегистрировать ещё одного участника
+          Зарегистрировать ещё одного
         </button>
-      </section>
+      </div>
     )
   }
 
   return (
-    <section>
-      <h2>Регистрация</h2>
+    <div className="registration-card">
+      <p className="eyebrow">
+        РЕГИСТРАЦИЯ
+      </p>
 
-      <form onSubmit={handleSubmit}>
-        <label>
-          Имя
+      <h2>
+        Принять участие
+      </h2>
+
+      <p className="registration-card__intro">
+        Заполните форму, чтобы зарегистрироваться
+        на мероприятие.
+      </p>
+
+      <form
+        className="registration-form"
+        onSubmit={handleSubmit}
+      >
+        <label className="form-field">
+          <span>Имя *</span>
 
           <input
             type="text"
             name="first_name"
             value={form.first_name}
             onChange={handleChange}
+            placeholder="Иван"
             required
           />
         </label>
 
-        <label>
-          Фамилия
+        <label className="form-field">
+          <span>Фамилия *</span>
 
           <input
             type="text"
             name="last_name"
             value={form.last_name}
             onChange={handleChange}
+            placeholder="Иванов"
             required
           />
         </label>
 
-        <label>
-          Email
+        <label className="form-field">
+          <span>Email *</span>
 
           <input
             type="email"
             name="email"
             value={form.email}
             onChange={handleChange}
+            placeholder="name@example.com"
             required
           />
 
           {errors.email && (
-            <p>{errors.email.join(' ')}</p>
+            <span className="form-error">
+              {errors.email.join(' ')}
+            </span>
           )}
         </label>
 
-        <label>
-          Телефон
+        <label className="form-field">
+          <span>Телефон</span>
 
           <input
             type="tel"
             name="phone"
             value={form.phone}
             onChange={handleChange}
+            placeholder="+7 999 000-00-00"
           />
         </label>
 
-        <label>
-          Компания
+        <label className="form-field">
+          <span>Компания</span>
 
           <input
             type="text"
             name="company"
             value={form.company}
             onChange={handleChange}
+            placeholder="Название компании"
           />
         </label>
 
-        <label>
-          Должность
+        <label className="form-field">
+          <span>Должность</span>
 
           <input
             type="text"
             name="position"
             value={form.position}
             onChange={handleChange}
+            placeholder="Ваша должность"
           />
         </label>
 
         {errors.non_field_errors && (
-          <p>{errors.non_field_errors.join(' ')}</p>
+          <div className="form-error">
+            {errors.non_field_errors.join(' ')}
+          </div>
         )}
 
         <button
           type="submit"
+          className="button button--primary registration-form__submit"
           disabled={submitting}
         >
           {submitting
             ? 'Отправляем...'
             : 'Зарегистрироваться'}
         </button>
+
+        <p className="registration-form__note">
+          Нажимая кнопку, вы отправляете данные
+          организатору мероприятия.
+        </p>
       </form>
-    </section>
+    </div>
   )
 }
 
