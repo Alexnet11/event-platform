@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
-
 import { getPublicEvents } from '../api/events'
 
 
@@ -27,37 +26,88 @@ function PublicEventList() {
   }, [])
 
   if (loading) {
-    return <p>Загружаем мероприятия...</p>
+    return (
+      <div className="empty-state">
+        Загружаем мероприятия...
+      </div>
+    )
   }
 
   if (error) {
-    return <p>Ошибка: {error}</p>
+    return (
+      <div className="empty-state empty-state--error">
+        Ошибка: {error}
+      </div>
+    )
   }
 
   if (events.length === 0) {
-    return <p>Публичных мероприятий пока нет.</p>
+    return (
+      <div className="empty-state">
+        Публичных мероприятий пока нет.
+      </div>
+    )
   }
 
   return (
-    <section>
-      <h2>Мероприятия</h2>
-
+    <div className="event-grid">
       {events.map((event) => (
-        <article key={event.id}>
-          <h3>{event.title}</h3>
+        <article
+          key={event.id}
+          className="event-card event-card--cover"
+          style={{
+            backgroundImage: event.cover_image
+              ? `
+                  linear-gradient(
+                    180deg,
+                    rgba(205, 208, 213, 0.1) 0%,
+                    rgba(207, 207, 207, 0.82) 100%
+                  ),
+                  url("${event.cover_image}")
+                `
+              : `
+                  linear-gradient(
+                    135deg,
+                   #2155d9 0%,
+                   #18212f 100%
+                  )
+                `,
+            }}
+>
+  <div className="event-card__content">
+    <div className="event-card__meta">
+      {event.starts_at && (
+        <span>
+          {new Date(
+            event.starts_at
+          ).toLocaleDateString(
+            'ru-RU',
+            {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            },
+          )}
+        </span>
+      )}
+    </div>
 
-          <p>{event.short_description}</p>
+    <div className="event-card__bottom">
+      <h3 className="event-card__title">
+        {event.title}
+      </h3>
 
-          <p>
-            {event.location_name}
-          </p>
-
-          <Link to={`/events/${event.slug}`}>
-            Подробнее
-          </Link>
-        </article>
+      <Link
+        to={`/events/${event.slug}`}
+        className="button button--light"
+      >
+        Подробнее
+      </Link>
+    </div>
+  </div>
+</article>
       ))}
-    </section>
+    </div>
   )
 }
 
