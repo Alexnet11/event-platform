@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
-import {
-  getCurrentUser,
-  getOrganizerEvents,
-} from '../api/organizer'
+import { getCurrentUser, getOrganizerEvents, } from '../api/organizer'
 
 
 function getVisibilityLabel(visibility) {
@@ -17,6 +14,14 @@ function getVisibilityLabel(visibility) {
   return labels[visibility] || visibility
 }
 
+function getStatusLabel(status) {
+  const labels = {
+    draft: 'Черновик',
+    published: 'Опубликовано',
+  }
+
+  return labels[status] || status
+}
 
 
 function OrganizerPage() {
@@ -185,9 +190,19 @@ function OrganizerPage() {
                 </h2>
               </div>
 
-              <span className="dashboard-count">
-                {events.length}
-              </span>
+              <div className="dashboard-section__actions">
+                <span className="dashboard-count">
+                  {events.length}
+                </span>
+
+                <Link
+                  to="/organizer/events/new"
+                  className="button button--primary"
+                >
+                  + Создать мероприятие
+                </Link>
+              </div>
+              
             </div>
 
             {events.length === 0 ? (
@@ -213,11 +228,19 @@ function OrganizerPage() {
 
                     <div className="dashboard-event-card__main">
                       <div className="dashboard-event-card__top">
-                        <span
-                          className={`status-badge status-badge--${event.visibility}`}
-                        >
-                          {getVisibilityLabel(event.visibility)}
-                        </span>
+                        <div className="event-card__badges">
+                          <span
+                            className={`event-badge event-badge--status event-badge--${event.status}`}
+                          >
+                            {getStatusLabel(event.status)}
+                          </span>
+
+                          <span
+                            className={`event-badge event-badge--visibility event-badge--${event.visibility}`}
+                          >
+                            {getVisibilityLabel(event.visibility)}
+                          </span>
+                        </div>
 
                         {event.starts_at && (
                           <span className="dashboard-event-card__date">
@@ -266,6 +289,14 @@ function OrganizerPage() {
                           Посмотреть страницу
                         </Link>
                       )}
+
+                      <Link
+                        to={`/organizer/events/${event.id}/edit`}
+                        className="button button--secondary"
+                      >
+                        Редактировать
+                      </Link>
+                      
 
                       {event.visibility === 'unlisted' && (
                         <Link

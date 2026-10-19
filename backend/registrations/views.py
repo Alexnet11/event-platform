@@ -26,6 +26,9 @@ class PublicRegistrationCreateView(generics.CreateAPIView):
                 Event.Visibility.PUBLIC,
                 Event.Visibility.UNLISTED,
             ],
+            
+            status=Event.Status.PUBLISHED,
+            registration_enabled=True,
         )
 
         if not event.registration_enabled:
@@ -59,10 +62,7 @@ class EventRegistrationListView(generics.ListAPIView):
             Event.objects.select_related("organization"),
             pk=self.kwargs["event_id"],
             organization__memberships__user=self.request.user,
-            organization__memberships__role__in=[
-                OrganizationMembership.Role.ADMIN,
-                OrganizationMembership.Role.MANAGER,
-            ],
+            organization__memberships__role__in=OrganizationMembership.organizer_roles()
         )
 
     def get_queryset(self):
@@ -84,10 +84,7 @@ class EventRegistrationDetailView(generics.RetrieveUpdateAPIView):
             .filter(
                 event_id=self.kwargs["event_id"],
                 event__organization__memberships__user=self.request.user,
-                event__organization__memberships__role__in=[
-                    OrganizationMembership.Role.ADMIN,
-                    OrganizationMembership.Role.MANAGER,
-                ],
+                event__organization__memberships__role__in=OrganizationMembership.organizer_roles()
             )
             .select_related(
                 "event",
@@ -110,10 +107,7 @@ class EventStatsView(APIView):
             Event.objects.select_related("organization"),
             pk=event_id,
             organization__memberships__user=request.user,
-            organization__memberships__role__in=[
-                OrganizationMembership.Role.ADMIN,
-                OrganizationMembership.Role.MANAGER,
-            ],
+            organization__memberships__role__in=OrganizationMembership.organizer_roles()
         )
 
         stats = Registration.objects.filter(
