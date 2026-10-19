@@ -9,6 +9,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "kind",
         )
 
 

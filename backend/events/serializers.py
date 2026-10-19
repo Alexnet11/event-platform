@@ -30,6 +30,7 @@ class EventSerializer(serializers.ModelSerializer):
             "registration_enabled",
             "cover_image",
             "visibility",
+            "status",
             "starts_at",
             "ends_at",
             "created_at",
@@ -53,10 +54,7 @@ class EventSerializer(serializers.ModelSerializer):
          allowed = OrganizationMembership.objects.filter(
              user = request.user,
              organization=organization,
-             role__in=[
-                 OrganizationMembership.Role.ADMIN,
-                 OrganizationMembership.Role.MANAGER,
-             ],
+             role__in=OrganizationMembership.organizer_roles() 
          ).exists()
          
          if not allowed:
@@ -72,11 +70,11 @@ class EventSerializer(serializers.ModelSerializer):
          return organization
                  
     def validate(self, attrs):
-        start_at = attrs.get("start_at", getattr(self.instance, "ends_at", None))
+        starts_at = attrs.get("starts_at", getattr(self.instance, "starts_at", None))
         
         ends_at = attrs.get("ends_at", getattr(self.instance, "ends_at", None))
         
-        if (start_at is not None and ends_at is not None and ends_at < start_at):
+        if (starts_at is not None and ends_at is not None and ends_at < starts_at):
             raise serializers.ValidationError(
                 {
                     "ends_at":(

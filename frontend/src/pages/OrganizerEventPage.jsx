@@ -19,6 +19,15 @@ function getVisibilityLabel(visibility) {
 }
 
 
+function getStatusLabel(status) {
+  const labels = {
+    draft: 'Черновик',
+    published: 'Опубликовано',
+  }
+
+  return labels[status] || status
+}
+
 
 function OrganizerEventPage() {
   const { eventId } = useParams()
@@ -121,23 +130,56 @@ function OrganizerEventPage() {
               </p>
             </div>
 
-            {event.visibility === 'public' && (
-              <Link
-                to={`/events/${event.slug}`}
-                className="button button--secondary"
+            <div className="event-card__badges">
+              <span
+                className={`event-badge event-badge--${event.status}`}
               >
-                Посмотреть страницу
-              </Link>
+                {getStatusLabel(event.status)}
+              </span>
+
+              <span
+                className={`event-badge event-badge--${event.visibility}`}
+              >
+                {getVisibilityLabel(event.visibility)}
+              </span>
+            </div>
+
+
+            {event.status === 'published'
+              && event.visibility === 'public' && (
+                <Link
+                  to={`/events/${event.slug}`}
+                  className="button button--secondary"
+                >
+                  Посмотреть страницу
+                </Link>
             )}
 
-            {event.visibility === 'unlisted' && (
-              <Link
-                to={`/events/${event.slug}`}
-                className="button button--secondary"
-              >
-                Посмотреть по ссылке
-              </Link>
-            )}
+            {event.status === 'published'
+              && event.visibility === 'unlisted' && (
+                <Link
+                  to={`/events/${event.slug}`}
+                  className="button button--secondary"
+                >
+                  Посмотреть по ссылке
+                </Link>
+              )}
+
+            {event.status === 'draft' && (
+              <span className="event-card__hint">
+                Опубликуйте мероприятие,
+                чтобы открыть доступ посетителям.
+              </span>
+            )} 
+
+
+            <Link
+              to={`/organizer/events/${event.id}/edit`}
+              className="button button--secondary"
+            >
+              Редактировать
+            </Link>
+ 
           </div>
         </div>
       </section>

@@ -9,6 +9,10 @@ class Event(models.Model):
     UNLISTED = "unlisted", "Unlisted"
     PRIVATE = "private", "Private"
     
+  class Status(models.TextChoices):
+    DRAFT = "draft", "Черновик"
+    PUBLISHED = "published", "Опубликовано"
+    
   organization = models.ForeignKey(
     Organization,
     on_delete=models.PROTECT,
@@ -55,6 +59,13 @@ class Event(models.Model):
     choices=Visibility.choices,
     default=Visibility.UNLISTED,
   )
+  
+  status = models.CharField(
+    max_length=20,
+    choices=Status.choices,
+    default=Status.DRAFT,
+)
+  
   
   starts_at = models.DateTimeField()
   
