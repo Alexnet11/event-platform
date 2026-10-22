@@ -6,13 +6,21 @@ __pycache__/
 # Django
 *.log
 staticfiles/
-media/
+backend/media/
 
 # Environment
 .env
+.env.*
+!.env.example
+
+# Databases / dumps
+*.sqlite3
+*.sql
+*.dump
 
 # Node
 node_modules/
+frontend/node_modules/
 frontend/dist/
 
 # IDE
@@ -22,5 +30,4 @@ frontend/dist/
 # OS
 .DS_Store
 Thumbs.db
-
-backend/media/
+*:Zone.Identifier
